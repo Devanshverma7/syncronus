@@ -42,10 +42,12 @@ const MessageBar = () => {
     setMessage((msg) => msg + emoji.emoji);
   };
   const handleSendMessage = async () => {
+    const _message = message;
+    setMessage("");
     if (selectedChatType === "contact") {
       socket.emit("sendMessage", {
         sender: userInfo.id,
-        content: message,
+        content: _message,
         recipient: selectedChatData._id,
         messageType: "text",
         fileUrl: undefined,
@@ -54,7 +56,7 @@ const MessageBar = () => {
     } else if (selectedChatType === "channel") {
       socket.emit("send-channel-message", {
         sender: userInfo.id,
-        content: message,
+        content: _message,
         messageType: "text",
         fileUrl: undefined,
         channelId: selectedChatData._id,
@@ -63,7 +65,7 @@ const MessageBar = () => {
     } else if (selectedChatType === "AI") {
       addMessage({
         sender: userInfo.id,
-        content: message,
+        content: _message,
         messageType: "text",
         timestamp: Date.now(),
       });
@@ -76,10 +78,9 @@ const MessageBar = () => {
       try {
         const response = await apiClient.post(
           ASK_AI,
-          { content: message },
+          { content: _message },
           { withCredentials: true }
         );
-
         if (response.status === 200) {
           const { aiMessage } = response.data;
           deleteAITypingMessage();
@@ -89,7 +90,6 @@ const MessageBar = () => {
         console.error("AI Chat Error:", err);
       }
     }
-    setMessage("");
   };
   const handleAttachmentClick = () => {
     if (fileInputRef.current) {
@@ -118,6 +118,7 @@ const MessageBar = () => {
               content: undefined,
               recipient: selectedChatData._id,
               messageType: "file",
+              chatType: selectedChatType,
               fileUrl: response.data.filePath,
             });
           } else if (selectedChatType === "channel") {
@@ -125,6 +126,7 @@ const MessageBar = () => {
               sender: userInfo.id,
               content: undefined,
               messageType: "file",
+              chatType: selectedChatType,
               fileUrl: response.data.filePath,
               channelId: selectedChatData._id,
             });

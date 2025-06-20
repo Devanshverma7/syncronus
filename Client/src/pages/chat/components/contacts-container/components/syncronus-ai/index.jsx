@@ -3,14 +3,16 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAppStore } from "@/store";
 
 const SyncronusAI = () => {
-  const { setSelectedChatType } = useAppStore();
+  const { selectedChatType, setSelectedChatType } = useAppStore();
 
   const handleClick = () => {
     setSelectedChatType("AI");
   };
   return (
     <div
-      className={`pl-10 py-2 transition-all duration-300 cursor-pointer`}
+      className={`pl-10 py-2 transition-all duration-300 cursor-pointer ${
+        selectedChatType === "AI" && "bg-[#8417ff] hover:bg-[#8417ff]"
+      }`}
       onClick={() => handleClick()}
     >
       <div className="flex gap-2 items-center justify-start text-neutral-300">

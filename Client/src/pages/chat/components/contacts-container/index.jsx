@@ -66,7 +66,6 @@ const ContactsContainer = () => {
         });
         if (response.data.contacts) {
           setDirectMessagesContacts(response.data.contacts);
-          console.log(response.data.contacts);
         }
       } catch (err) {
         console.error(

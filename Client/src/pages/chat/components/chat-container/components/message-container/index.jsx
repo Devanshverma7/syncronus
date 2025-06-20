@@ -189,9 +189,9 @@ const MessageContainer = () => {
         <div
           className={`${
             message.sender !== undefined
-              ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+              ? "bg-[#8417ff]/5 text-white/80 border-[#8417ff]/50"
               : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
-          } border inline-block p-4 rounded my-1 max-w-[90%] break-words whitespace-pre-wrap prose prose-invert`}
+          } border inline-block p-4 rounded my-1 max-w-[90%] break-words whitespace-pre-wrap text-left`}
         >
           <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
             {message.content}
@@ -213,9 +213,9 @@ const MessageContainer = () => {
         <div
           className={`${
             message.sender !== selectedChatData._id
-              ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+              ? "bg-[#8417ff]/5 text-white/80 border-[#8417ff]/50"
               : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
-          } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+          } border inline-block p-4 rounded my-1 max-w-[50%] break-words whitespace-pre-wrap text-left`}
         >
           {message.content}
         </div>
@@ -226,7 +226,7 @@ const MessageContainer = () => {
             message.sender !== selectedChatData._id
               ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
               : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
-          } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+          } border inline-block p-4 rounded my-1 max-w-[50%] break-words whitespace-pre-wrap text-left`}
         >
           {checkIfImage(message.fileUrl) ? (
             <div
@@ -275,9 +275,9 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender._id === userInfo.id
-                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                ? "bg-[#8417ff]/5 text-white/80 border-[#8417ff]/50"
                 : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words ml-9`}
+            } border inline-block p-4 rounded my-1 max-w-[50%] break-words whitespace-pre-wrap text-left ml-9`}
           >
             {message.content}
           </div>
@@ -288,7 +288,7 @@ const MessageContainer = () => {
               message.sender._id === userInfo.id
                 ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
                 : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+            } border inline-block p-4 rounded my-1 max-w-[50%] break-words whitespace-pre-wrap text-left`}
           >
             {checkIfImage(message.fileUrl) ? (
               <div
