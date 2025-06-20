@@ -1,10 +1,7 @@
 import axios from "axios";
-import dotenv from "dotenv";
 import Message from "../models/messageModel.js";
 
-dotenv.config();
-
-const GROQ_API_KEY = process.env.GROQ_AI_API_KEY;
+const GROQ_API_KEY = "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";
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 export const sendAIMessage = async (req, res) => {

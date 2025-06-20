@@ -6,30 +6,85 @@ export const searchContacts = async (req, res) => {
   try {
     const { searchTerm } = req.body;
 
-    if (searchTerm === undefined || searchTerm === null) {
+    if (!searchTerm || searchTerm.trim() === "") {
       return res.status(400).send("searchTerm is required.");
     }
 
-    const sanitizedSearchTerm = searchTerm.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
+    const trimmedSearchTerm = searchTerm.trim();
+
+    // Approach 1: Prefix matching (starts with)
+    const prefixRegex = new RegExp(
+      `^${trimmedSearchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+      "i"
     );
 
-    const regex = new RegExp(sanitizedSearchTerm, "i");
+    // Approach 2: Word boundary matching (matches whole words)
+    const wordBoundaryRegex = new RegExp(
+      `\\b${trimmedSearchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+      "i"
+    );
 
-    const contacts = await User.find({
-      $and: [
-        { _id: { $ne: req.userId } },
-        {
-          $or: [{ firstName: regex }, { lastName: regex }, { email: regex }],
-        },
-      ],
-    });
+    // Approach 3: Exact match for email, prefix for names
+    const exactEmailRegex = new RegExp(
+      `^${trimmedSearchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+      "i"
+    );
+
+    let searchQuery;
+
+    // Check if search term looks like an email
+    const isEmailSearch = trimmedSearchTerm.includes("@");
+
+    if (isEmailSearch) {
+      // For email searches, use exact or prefix matching
+      searchQuery = {
+        $and: [
+          { _id: { $ne: req.userId } },
+          {
+            $or: [
+              { email: exactEmailRegex }, // Exact email match
+              { email: prefixRegex }, // Email prefix match
+            ],
+          },
+        ],
+      };
+    } else {
+      // For name searches, use multiple strategies
+      searchQuery = {
+        $and: [
+          { _id: { $ne: req.userId } },
+          {
+            $or: [
+              // Prefix matching for first and last names
+              { firstName: prefixRegex },
+              { lastName: prefixRegex },
+              // Word boundary matching for full names
+              { firstName: wordBoundaryRegex },
+              { lastName: wordBoundaryRegex },
+              // Full name search (firstName + lastName)
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $concat: ["$firstName", " ", "$lastName"] },
+                    regex: prefixRegex,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      };
+    }
+
+    const contacts = await User.find(searchQuery)
+      .select("firstName lastName email profilePicture") // Only select needed fields
+      .limit(20) // Limit results for performance
+      .sort({ firstName: 1, lastName: 1 }); // Sort results
 
     return res.status(200).json({ contacts });
   } catch (err) {
-    console.error(err);
-    return res.status(500).send("Internal Serve Error");
+    console.error("Search contacts error:", err);
+    return res.status(500).send("Internal Server Error");
   }
 };
 
